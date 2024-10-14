@@ -1,0 +1,70 @@
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+model User {
+    id            String       @id
+    name          String       @db.VarChar(255)
+    email         String       @unique @db.VarChar(255)
+    password_hash String       @db.VarChar(255)
+    documents     Document[] // Relation to documents the user has access to
+    sessions      Session[] // Relation to active sessions
+    rooms         Room[]       @relation("RoomUsers") // Rooms the user is part of
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @default(now())
+    Permission    Permission[]
+}
+
+model Room {
+    id           String   @id
+    link         String   @unique @db.VarChar(255) // Unique room link
+    documentId   String
+    document     Document @relation(fields: [documentId], references: [id]) // Relation to the document being edited
+    users        User[]   @relation("RoomUsers") // Users currently in the room
+    isRoomActive Boolean  @default(true) // Whether the room is active or not
+    createdAt    DateTime @default(now())
+    updatedAt    DateTime @updatedAt
+}
+
+model Document {
+    id          String       @id
+    title       String       @db.VarChar(255)
+    content     String       @default("")
+    ownerId     String // Owner of the document
+    owner       User         @relation(fields: [ownerId], references: [id])
+    sessions    Session[] // Active collaboration sessions on this document
+    permissions Permission[]
+    rooms       Room[] // Relation to rooms that include this document
+    createdAt   DateTime     @default(now())
+    updatedAt   DateTime     @updatedAt
+}
+
+model Permission {
+    id         String   @id
+    userId     String
+    documentId String
+    role       Role
+    user       User     @relation(fields: [userId], references: [id])
+    document   Document @relation(fields: [documentId], references: [id])
+}
+
+model Session {
+    id             String   @id
+    documentId     String
+    document       Document @relation(fields: [documentId], references: [id])
+    userId         String
+    user           User     @relation(fields: [userId], references: [id])
+    connectedAt    DateTime @default(now())
+    disconnectedAt DateTime
+}
+
+enum Role {
+    VIEWER
+    EDITOR
+    HOST
+}
