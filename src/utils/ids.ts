@@ -1,5 +1,6 @@
-import { customAlphabet } from "nanoid";
-import { logger } from "./logger";
+// import { customAlphabet } from "nanoid";
+const { customAlphabet } = require("nanoid");
+// import { logger } from "./logger";
 
 const ID_SIZE = 15;
 
@@ -12,7 +13,7 @@ export const getNewUserId = (): string => {
   try {
     return `usr_${nanoid()}`;
   } catch (error) {
-    logger.error(error, "error in getNewUserId-->");
+    // logger.error(error, "error in getNewUserId-->");
     return `usr_${nanoid()}`;
   }
 };
@@ -21,7 +22,7 @@ export const getNewRoomId = (): string => {
   try {
     return `room_${nanoid()}`;
   } catch (error) {
-    logger.error(error, "error in getNewRoomId-->");
+    // logger.error(error, "error in getNewRoomId-->");
     return `room_${nanoid()}`;
   }
 };

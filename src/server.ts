@@ -1,8 +1,8 @@
 // ESM
 import fastifyCors from "@fastify/cors";
 import Fastify from "fastify";
-import { requestLogger } from "./middlewares/logging";
-import { errorHandler } from "./middlewares/errorHandler";
+// import { requestLogger } from "./middlewares/logging";
+// import { errorHandler } from "./middlewares/errorHandler";
 import { PrismaClient } from "@prisma/client";
 import { authRoutes } from "./routes/auth_routes";
 import fastifyJwt from "@fastify/jwt";
@@ -11,15 +11,16 @@ import { roomRoutes } from "./routes/room_routes";
 export const prisma = new PrismaClient();
 
 const server = Fastify({
-  logger: {
-    transport: {
-      target: "pino-pretty",
-      options: {
-        translateTime: "HH:MM:ss Z",
-        ignore: "pid,hostname",
-      },
-    },
-  },
+  logger: true,
+  // logger: {
+  //   transport: {
+  //     target: "pino-pretty",
+  //     options: {
+  //       translateTime: "HH:MM:ss Z",
+  //       ignore: "pid,hostname",
+  //     },
+  //   },
+  // },
 });
 
 server.register(fastifyCors, { origin: true });
@@ -29,9 +30,9 @@ server.register(fastifyJwt, {
   sign: { algorithm: "HS256" },
 });
 
-server.addHook("onRequest", requestLogger);
+// server.addHook("onRequest", requestLogger);
 
-server.addHook("onError", errorHandler);
+// server.addHook("onError", errorHandler);
 
 server.get("/", async (_request, reply) => {
   const resp = new Date();
