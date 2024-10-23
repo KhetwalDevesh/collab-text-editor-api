@@ -33,7 +33,7 @@ export const getRoomDetails = async (
   try {
     const room = await prisma.room.findUnique({
       where: { id },
-      select: { isRoomActive: true },
+      select: { isRoomActive: true, users: true },
     });
     if (!room) {
       return reply.status(404).send({ error: "Room not found" });
